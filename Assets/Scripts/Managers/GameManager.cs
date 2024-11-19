@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI waveText;
     [SerializeField] private Slider hpGaugeSlider;
     [SerializeField] private GameObject gameOverUI;
+    [SerializeField] private GameObject resumeGameUI;
 
     [SerializeField] private int currentWaveIndex = 0;
     private int currentSpawnCount = 0;
@@ -47,7 +48,7 @@ public class GameManager : MonoBehaviour
     private List<Transform> spawnPositions = new List<Transform>();
 
     [SerializeField] private List<GameObject> Rewards = new List<GameObject>();
-
+    [SerializeField] private List<GameObject> DeBuffs = new List<GameObject>();
     private void Awake()
     {
         if (Instance != null) Destroy(gameObject);
@@ -139,6 +140,11 @@ public class GameManager : MonoBehaviour
         if (currentWaveIndex % 3 == 0)
         {
             IncreaseWaveSpawnCount();
+        }
+
+        if ((currentWaveIndex - 10) % 20 == 0)
+        {
+            CreateDeBuff();
         }
     }
 
@@ -232,6 +238,11 @@ public class GameManager : MonoBehaviour
         Instantiate(obj, spawnPositions[randomPOsitionIndex].position, Quaternion.identity);
     }
 
+    private void CreateDeBuff()
+    {
+        //CreateReward 똑같이 작성;
+    }
+
     private void OnEnemyDeath()
     {
         currentSpawnCount--;
@@ -244,6 +255,16 @@ public class GameManager : MonoBehaviour
         StopAllCoroutines();
     }
 
+    public void PauseGame()
+    {
+        Time.timeScale = 0f;
+        resumeGameUI.SetActive(true);
+    }
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
+        resumeGameUI.SetActive(false);
+    }
     private void UpdateHealthUI()
     {
         hpGaugeSlider.value = playerHealthSystem.CurrentHealth / playerHealthSystem.MaxHealth;
